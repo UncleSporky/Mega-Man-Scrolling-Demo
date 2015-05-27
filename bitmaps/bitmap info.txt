@@ -1,0 +1,13 @@
+These bitmaps are actually inverted from what they need to be in Arduboy code.
+
+The program I use to convert them is called LCD Assistant:
+http://en.radzio.dxp.pl/bitmap_converter/
+
+It outputs black as a 1 and white as 0, but on the Arduboy, by default white is
+a solid pixel and is thus 1, and black is 0.
+
+Converting bitmaps before including them in your program is important.  The
+Arduboy's screen receives bytes in an unconventional way, oriented vertically
+instead of horizontally.  There is no easy way to convert a normal left-to-right,
+top-to-bottom bitmap outside of a complex conversion done on the fly in code,
+which is very time consuming, or via a conversion program like the one above.
