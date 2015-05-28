@@ -40,6 +40,15 @@ byte buttons;         //stores the current button state
 byte drawMode = 2;    //the current user-selected greyscale drawing mode
 byte musicMode = 1;   //the current user-selected music mode (1 = play music)
 
+#define SCREENCOUNTER 0  //change this to 1 to display a microsecond counter on the screen
+
+#if SCREENCOUNTER  //microsecond counter variables
+byte microCounter = 0;
+long microDelta = 0;
+long displayDelta = 0;
+long lastCheck = 0;
+#endif
+
 void setup()
 {
     SPI.begin();
@@ -85,6 +94,24 @@ void loop() {
   //the megaFrame calculation skips downward to later frames of his run animation
   display.drawMaskedBitmap(52, 24, megaman + (megaFrame * (SIZE_MEGAMAN * 3)) + ((bool)frame * SIZE_MEGAMAN), 
                                    megaman + (megaFrame * (SIZE_MEGAMAN * 3)) + (SIZE_MEGAMAN * 2), 24, 24, 1);
+
+  //If screencounter is set to 1, this block of code will keep track of
+  //how many microseconds has passed every iteration through the main loop
+  //and will display it in the top left corner on the screen.
+  //As of 5/2015, this appears to hover in the range of 11,400, but there
+  //can be a wide variance from 10,000 to 12,000. (10 to 12 milliseconds.)
+  #if SCREENCOUNTER
+  microDelta = micros() - lastCheck;
+  lastCheck = micros();
+
+  microCounter++;
+  if(microCounter > 200) {
+    microCounter = 0;
+    displayDelta = microDelta;
+  }
+  display.setCursor(0,0);
+  display.print(displayDelta);
+  #endif
   
   //copy the buffer to the screen and show us the picture we have built!
   display.display();
